@@ -1,31 +1,154 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31702.278
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "一元多项式相加", "一元多项式相加\一元多项式相加.vcxproj", "{74D6EB82-7EA0-424E-AAD5-05108862444E}"
-EndProject
-Global
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|x64 = Debug|x64
-		Debug|x86 = Debug|x86
-		Release|x64 = Release|x64
-		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{74D6EB82-7EA0-424E-AAD5-05108862444E}.Debug|x64.ActiveCfg = Debug|x64
-		{74D6EB82-7EA0-424E-AAD5-05108862444E}.Debug|x64.Build.0 = Debug|x64
-		{74D6EB82-7EA0-424E-AAD5-05108862444E}.Debug|x86.ActiveCfg = Debug|Win32
-		{74D6EB82-7EA0-424E-AAD5-05108862444E}.Debug|x86.Build.0 = Debug|Win32
-		{74D6EB82-7EA0-424E-AAD5-05108862444E}.Release|x64.ActiveCfg = Release|x64
-		{74D6EB82-7EA0-424E-AAD5-05108862444E}.Release|x64.Build.0 = Release|x64
-		{74D6EB82-7EA0-424E-AAD5-05108862444E}.Release|x86.ActiveCfg = Release|Win32
-		{74D6EB82-7EA0-424E-AAD5-05108862444E}.Release|x86.Build.0 = Release|Win32
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {5CE412AB-624D-4773-8621-F5BD44A31E68}
-	EndGlobalSection
-EndGlobal
+#include<iostream>
+#include<stdlib.h>
+#include<stdio.h>
+using namespace std;
+
+struct Node {                    //a是系数，b是次数
+	int a;
+	int b;
+	struct Node*link;
+};
+struct Node* head1=new Node();
+struct Node* head2=new Node();
+struct Node* head3=new Node();
+int max3;                //所输入的总最大次数
+
+void insert(Node*HEAD,int a, int b)      //插入一个多项式
+{
+	Node* temp = new Node();
+	temp->a = a;
+	temp->b = b;
+	temp->link = NULL;
+	if(HEAD==NULL)
+		HEAD = temp;
+	else
+	{
+		Node*temp1 = HEAD;
+		while (temp1->link != NULL)
+			temp1 = temp1->link;
+		temp1->link = temp;
+	}
+}
+
+void print(Node*HEAD)          //打印一个多项式
+{
+	Node* temp = HEAD;
+	cout << "The result of two equation add is = ";
+	while (temp->link!= NULL)
+	{
+		temp = temp->link;
+		if (temp->b != 0 && temp->a != 0) 
+		{
+			if (temp->b != max3)
+				cout << " + ";
+			cout << temp->a << "x^" << temp->b;
+		}
+		else if(temp->b==0&&temp->a!=0)
+			cout << " +  "<<temp->a << endl;
+	}
+}
+void add()             //使两个多项式相加
+{
+	Node* temp  = new Node();
+	Node* temp1 = new Node();
+	temp = head3;
+	while (temp->link != NULL)
+	{
+		temp = temp->link;
+		temp1 = head1;                 //使temp1它回到第一个链表的头结点
+		while (temp1->link != NULL)
+		{
+			temp1 = temp1->link;
+			if (temp1->b == temp->b)
+				temp->a = temp->a + temp1->a;
+		}
+	}
+	temp = head3;                      //使temp回到第三个链表的头结点
+	while (temp->link != NULL)
+	{
+		temp = temp->link;
+		temp1 = head2;
+		while (temp1->link != NULL)
+		{
+			temp1 = temp1->link;
+			if (temp1->b == temp->b)
+				temp->a = temp->a + temp1->a;
+		}
+	}
+}
+void FindMax()           //找所输入的次数的最大值
+{
+	int max1, max2;
+	Node* first1 = head1->link;
+	Node* first2 = head2->link;
+	max1 = first1->b;
+	max2 = first2->b;
+	Node* temp = head1;
+	while (first1->link != NULL)
+	{
+		first1 = first1->link;
+		temp = temp->link;
+		if (first1->b > temp->b)
+			max1 = first1->b;
+	}
+
+	temp = head2;
+	while (first2->link != NULL)
+	{
+		first2 = first2->link;
+		temp = temp->link;
+		if (first2->b > temp->b)
+			max2 = first2->b;
+	}
+	//cout <<"max1 is " <<max1 << "  max2 is " << max2<<endl;
+	if (max1 >= max2)
+		max3 = max1;
+	else
+		max3 = max2;
+}
+void main()
+{
+	int num, p, a,b,c,d;
+	head1->link = NULL;
+	head2->link = NULL;
+	head3->link = NULL;
+	cout << "Please enter the first item number of equation : ";    //创建第一个链表
+	cin >> num;
+	for (p = 0; p < num; p++)
+	{
+		cout << "Enter ( " << p + 1 << " ) coefficient = ";
+		cin >> a;
+		cout << "Enter ( " << p + 1 << " ) time = ";
+		cin >> b;
+		insert(head1,a, b);
+	}
+	//print(head1);
+
+	cout << endl<<"Please enter the second item number of equation :";    //创建第二个链表
+	cin >> num;
+	for (p = 0; p < num; p++)
+	{
+		cout << "Enter ( " << p + 1 << " ) coefficient = ";
+		cin >> a;
+		cout << "Enter ( " << p + 1 << " ) time = ";
+		cin >> b;
+		insert(head2, a, b);
+	}
+	//print(head2);
+
+	FindMax();
+	//cout << "max3= " << max3<<endl;
+	int w = max3;
+	for (p = 0; p <=max3; p++)      //创建第三个链表
+	{
+		insert(head3, 0, w);
+		w = w - 1;
+	}
+	add();
+	cout << endl;
+	print(head3);
+
+	free(head1);
+	free(head2);
+	free(head3);
+}
